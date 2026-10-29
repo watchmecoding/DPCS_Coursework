@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-report_final.py — табличний звіт за експериментами simulator_final.py (версія 5.0).
-    python report_final.py [--quick] [--model n|s|m|l|x] [--out DIR] [e3 e8 ...] [--export-only]
-Експерименти: m0 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e11 e13 e14. Динамічні відмови свідомо відсутні.
-Кожен результат одразу зберігається в CSV та checkpoint.json; Excel потребує openpyxl, але не обов'язковий.
-"""
 from __future__ import annotations
 import argparse, hashlib, json, platform, random, statistics, sys, time
 from pathlib import Path
