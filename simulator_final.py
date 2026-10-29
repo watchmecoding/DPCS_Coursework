@@ -474,9 +474,6 @@ def route_one_to_one(topo: Topology, src: int, dst: int, faults: Faults = NO_FAU
     відстань до призначення (продуктивний порт; порядок: хорди, потім ортогональні).
     Якщо продуктивних живих портів немає, виконується обхід: обирається сусід за ключем
     (менше відвідувань, менша відстань, порт), що не дає зациклитись.
-    Без відмов шлях збігається з мінімальним. З відмовами гарантії доставки НЕМАЄ
-    (наявність шляху не означає, що локальне правило його знайде): частку успіху потрібно
-    вимірювати експериментом (E5).
     """
     if not faults.alive_node(src) or not faults.alive_node(dst):
         return RouteResult(False, [src], "кінець маршруту несправний")
@@ -1336,10 +1333,6 @@ def flow_balance_table(topo: "Topology") -> Optional[Dict[int, Dict[int, int]]]:
     return tab
 
 
-# ======================================================================
-# 12. Аналітична оцінка all-gather для еталонних топологій (відомі алгоритми)
-# ======================================================================
-
 def ideal_allgather_estimate(topo: "Topology", cfg: SimConfig, flits: Optional[int] = None) -> Optional[int]:
     """Оцінка часу all-gather (такти) для відомих алгоритмів без конфліктів за канали.
     Гіперкуб Q_k: k копій рекурсивного подвоєння з частинами M/k, зсунутими за вимірами:
@@ -1376,21 +1369,6 @@ def exp_allgather_modes(T: "Topology", cfg: SimConfig) -> List[Dict]:
         r["mode"] = tag
         rows.append(r)
     return rows
-
-
-# ======================================================================
-# 13. Кадровий бюджет для моделей YOLO26
-# ======================================================================
-
-
-
-
-
-
-
-# ======================================================================
-# 14. Мережеві моделі: шляхи, обмін гранями, колективні операції (v5)
-# ======================================================================
 
 def simulate_paths(topo, cfg, messages, paths, faults=NO_FAULTS):
     """messages = (src, dst, t0, flits). Незалежні напрямлені канали з чергами; повертає затримки (такти).
@@ -1536,11 +1514,6 @@ def simulate_collective(topo, cfg, roots, faults=NO_FAULTS, flits=None, balance=
                 repair_rounds=max(t.repair_rounds for t in trees.values()),
                 frame_pct=100.0 * cfg.ms(t_done) / cfg.frame_budget_ms, complete=complete)
 
-
-# ======================================================================
-# 15. Спільний CDG, аналітичні метрики, відображення на гіперкуб
-# ======================================================================
-
 def combined_cdg(topo, faults, hc, balance="flow"):
     """Об'єднаний CDG усіх маршрутів ONE-TO-ONE-FT та всіх дерев розсилки (корінь — кожен живий вузол) зі СПІЛЬНИМ пулом
     VC: у маршрутів VC = номер переходу (фаза 1) або hc (escape); у розсилки VC = глибина дитини - 1.
@@ -1637,10 +1610,6 @@ def embed_hypercube(topo, method="gray"):
     return dict(host_dim=H, expansion=(1 << H) / topo.N, dilation_max=max(lengths), dilation_mean=statistics.mean(lengths),
                 grid_dilation_max=max(grid_lengths), congestion_max=max(loads.values()))
 
-
-# ======================================================================
-# 16. Кадровий бюджет, пам'ять і консольні експерименти
-# ======================================================================
 
 def yolo_frame_budget(topo, key, n_halos=(50, 100, 200), modes=(("потік + крит. шлях", "flow", "critical"), ("пріоритет портів", False, "fifo"))):
     """Обмін за кадр = n_halo*T_halo + T_allgather + T_bcast; n_halo — параметр чутливості. Потрібна продуктивність
