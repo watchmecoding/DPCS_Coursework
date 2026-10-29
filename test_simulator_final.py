@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""Автотести симулятора ШХТ: python3 -m unittest -v test_simulator"""
 import random
 import unittest
 
